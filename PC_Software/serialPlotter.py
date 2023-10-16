@@ -13,7 +13,7 @@ import serial
 
 serial_connected = 0
 baud_rate = 9600 #Replace with your baud rate
-port = "COM6" #Replace with your port
+port = "COM3" #Replace with your port
 if os.path.exists(port):
     ser = serial.Serial(port, baud_rate)
     serial_connected = 1
@@ -36,15 +36,16 @@ def animate(i, xs):
     if ser.inWaiting() > 0:
         esp_data = ser.readline()
         esp_data = esp_data.decode("utf-8","ignore")
-        if(esp_data != "\n"):
+        if(esp_data != "\n" and esp_data != "\r\n"):
             xs.append(float(esp_data)) # TODO Update faster to collect all data but plot every 10th call for example
     
     if(len(xs) > 1000):
         xs = xs[-1000:]
 
     x_axis = np.arange(len(xs))
-    ax.set_xlim((0, len(xs)))
-    ax.set_ylim((np.min(xs), np.max(xs)))
+    if(len(xs) > 2):
+        ax.set_xlim((0, len(xs)))
+        ax.set_ylim((np.min(xs), np.max(xs)))
     line1[0].set_data(x_axis, xs)
     
 
